@@ -1,0 +1,86 @@
+# Story Validator Node Kurulumu
+
+Bu rehber, Story Blockchain üzerinde bir doğrulayıcı (validator) node kurmak ve çalıştırmak isteyenler için hazırlanmıştır.
+
+## 🚀 Sistem Gereksinimleri
+
+| Bileşen      | Minimum Gereksinim |
+|-------------|------------------|
+| **CPU**     | 4 Çekirdek       |
+| **RAM**     | 16 GB            |
+| **Depolama** | 500 GB SSD       |
+| **İnternet**| Sabit, Statik IP |
+
+## 🛠 Gerekli Yazılımlar
+
+Aşağıdaki bağımlılıkları sisteminize yüklemeniz gerekmektedir:
+
+```bash
+# Güncellemeleri kontrol edin
+sudo apt update && sudo apt upgrade -y
+
+# Docker'ı yükleyin
+sudo apt install -y docker.io
+sudo systemctl start docker
+sudo systemctl enable docker
+
+# Go Programlama Dilini yükleyin
+wget https://go.dev/dl/go1.20.5.linux-amd64.tar.gz
+sudo tar -C /usr/local -xzf go1.20.5.linux-amd64.tar.gz
+echo "export PATH=$PATH:/usr/local/go/bin" >> ~/.profile
+source ~/.profile
+```
+
+## 📌 Story Node Kurulumu
+
+```bash
+# Kaynak kodunu klonlayın
+git clone https://github.com/StoryFoundation/story-node.git
+cd story-node
+
+# Derleme işlemi
+make install
+```
+
+## ⏳ Node'u Başlatma ve Senkronizasyon
+
+```bash
+# Node'u başlatın
+storyd start
+```
+Node'unuzun ağ ile tam olarak senkronize olması birkaç saat sürebilir.
+
+## ✅ Validatör Kaydı ve Stake İşlemi
+
+Node senkronize olduktan sonra aşağıdaki komutla validatör olun:
+
+```bash
+storyd tx staking create-validator \
+  --amount=1000000ustory \
+  --pubkey=$(storyd tendermint show-validator) \
+  --moniker="SizinMonikerAdınız" \
+  --chain-id=story-mainnet \
+  --from=cuzdan_adiniz \
+  --commission-rate="0.10" \
+  --commission-max-rate="0.20" \
+  --commission-max-change-rate="0.01" \
+  --min-self-delegation="1"
+```
+
+## 🔄 Güncellemeler ve Bakım
+
+Güncellemeleri düzenli olarak kontrol edin ve node'unuzun stabil çalışmasını sağlayın:
+
+```bash
+# Güncellemeleri yükleyin
+cd story-node
+git pull
+make install
+
+# Node'u yeniden başlatın
+systemctl restart storyd
+```
+
+---
+
+📌 Daha fazla bilgi için: [Story Foundation Docs](https://docs.story.foundation/docs/node-setup-mainnet)
